@@ -1,0 +1,37 @@
+name: CI/CD for Flutter CallRecording App
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+
+      - name: Install Flutter
+        run: |
+          curl -fsSL https://flutter.dev/ | bash -s -- - --trace-networking
+
+      - name: Configure Flutter
+        run: flutter config --enable-flutter-plugins
+        
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build the app for Android
+        run: flutter build apk --release
+
+      - name: Build the app for iOS
+        run: flutter build ios --release
+
+      - name: Run tests
+        run: flutter test
